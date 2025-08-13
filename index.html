@@ -438,7 +438,34 @@
                     If you encounter any issues accessing the files, please feel free to
                     contact us at <a href="mailto:d.zhang17@imperial.ac.uk">d.zhang17@imperial.ac.uk</a> or <a href="mailto:l.wei24@imperial.ac.uk">l.wei24@imperial.ac.uk</a>.
                     </p>
-                    <p><strong>Citation:</strong> When using the datasets, please cite: L. Wei and D. Zhang, "A Dataset and Benchmarks for Deep Learning-Based Optical Microrobot Pose and Depth Perception," 2025 International Conference on Manipulation, Automation and Robotics at Small Scales (MARSS), West Lafayette, IN, USA, 2025, pp. 1-8, doi: 10.1109/MARSS65887.2025.11072739.</p>
+                    <!-- <div><p><strong>Citation:</strong> When using the datasets, please cite: </p></div> -->
+                    <div class="citation-section">
+                        <div class="citation-header">
+                            <div>When using the datasets, please cite: </div>
+                            <div class="citation-controls">
+                                <select id="citation-format" class="citation-format-selector">
+                                    <option value="plain">Plain Text</option>
+                                    <option value="bibtex" selected>BibTeX</option>
+                                    <option value="ris">RIS</option>
+                                </select>
+                                <button id="copy-citation" class="copy-button" title="复制引用">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8 4V16C8 17.1046 8.89543 18 10 18H18C19.1046 18 20 17.1046 20 16V7.24264C20 6.91441 19.8695 6.59936 19.6364 6.36628L16.6364 3.36628C16.4033 3.13319 16.0882 3.00275 15.7601 3.00275H10C8.89543 3.00275 8 3.89818 8 5.00275V4Z" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M16 18V20C16 21.1046 15.1046 22 14 22H6C4.89543 22 4 21.1046 4 20V9C4 7.89543 4.89543 7 6 7H8" stroke="currentColor" stroke-width="2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="citation-content" class="citation-content" style="font-family: monospace; white-space: pre-line; font-size: 0.9em;">@inproceedings{wei2025dataset,
+  title={A Dataset and Benchmarks for Deep Learning-Based Optical Microrobot Pose and Depth Perception},
+  author={Wei, L. and Zhang, D.},
+  booktitle={2025 International Conference on Manipulation, Automation and Robotics at Small Scales (MARSS)},
+  pages={1--8},
+  year={2025},
+  address={West Lafayette, IN, USA},
+  doi={10.1109/MARSS65887.2025.11072739}
+}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -641,6 +668,94 @@ window.addEventListener('resize', () => {
         });
         resizeTicking = true;
     }
+});
+
+// 引用格式切换和复制功能
+document.addEventListener('DOMContentLoaded', function() {
+    const citationFormatSelect = document.getElementById('citation-format');
+    const citationContent = document.getElementById('citation-content');
+    const copyButton = document.getElementById('copy-citation');
+    
+    // 不同格式的引用内容
+    const citations = {
+        plain: 'L. Wei and D. Zhang, "A Dataset and Benchmarks for Deep Learning-Based Optical Microrobot Pose and Depth Perception," 2025 International Conference on Manipulation, Automation and Robotics at Small Scales (MARSS), West Lafayette, IN, USA, 2025, pp. 1-8, doi: 10.1109/MARSS65887.2025.11072739.',
+        
+        bibtex: `@inproceedings{wei2025dataset,
+  title={A Dataset and Benchmarks for Deep Learning-Based Optical Microrobot Pose and Depth Perception},
+  author={Wei, L. and Zhang, D.},
+  booktitle={2025 International Conference on Manipulation, Automation and Robotics at Small Scales (MARSS)},
+  pages={1--8},
+  year={2025},
+  address={West Lafayette, IN, USA},
+  doi={10.1109/MARSS65887.2025.11072739}
+}`,
+        
+        ris: `TY  - CONF
+TI  - A Dataset and Benchmarks for Deep Learning-Based Optical Microrobot Pose and Depth Perception
+AU  - Wei, L.
+AU  - Zhang, D.
+BT  - 2025 International Conference on Manipulation, Automation and Robotics at Small Scales (MARSS)
+CY  - West Lafayette, IN, USA
+DA  - 2025
+SP  - 1
+EP  - 8
+DO  - 10.1109/MARSS65887.2025.11072739
+ER  -`
+    };
+    
+    // 格式切换事件
+    citationFormatSelect.addEventListener('change', function() {
+        const selectedFormat = this.value;
+        citationContent.textContent = citations[selectedFormat];
+        
+        // 根据格式调整样式
+        if (selectedFormat === 'bibtex' || selectedFormat === 'ris') {
+            citationContent.style.fontFamily = 'monospace';
+            citationContent.style.whiteSpace = 'pre-line';
+            citationContent.style.fontSize = '0.9em';
+        } else {
+            citationContent.style.fontFamily = 'inherit';
+            citationContent.style.whiteSpace = 'normal';
+            citationContent.style.fontSize = 'inherit';
+        }
+    });
+    
+    // 复制功能
+    copyButton.addEventListener('click', async function() {
+        try {
+            const selectedFormat = citationFormatSelect.value;
+            const textToCopy = citations[selectedFormat];
+            
+            await navigator.clipboard.writeText(textToCopy);
+            
+            // 显示复制成功的反馈
+            const originalTitle = this.title;
+            this.title = '已复制!';
+            this.style.color = '#4CAF50';
+            
+            setTimeout(() => {
+                this.title = originalTitle;
+                this.style.color = '';
+            }, 2000);
+            
+        } catch (err) {
+            console.error('复制失败:', err);
+            // 降级到传统复制方法
+            const textArea = document.createElement('textarea');
+            textArea.value = citations[citationFormatSelect.value];
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            this.title = '已复制!';
+            this.style.color = '#4CAF50';
+            setTimeout(() => {
+                this.title = '复制引用';
+                this.style.color = '';
+            }, 2000);
+        }
+    });
 });
 </script>
 
